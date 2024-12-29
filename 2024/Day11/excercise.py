@@ -31,61 +31,67 @@ with open("puzzle.txt", "r") as fr:
     curr_stones = deepcopy(base_stones)
     map_stones = {}
     number_blinks = 75
-    for i in range(1, number_blinks + 1):
-        print(f'Doing iteration {i}')
-        stones_end = []
-        distinct_stones = set(curr_stones)
-        # print(f'Distinct stones are {len(set(curr_stones))}')
-        for stone in set(curr_stones):
-            if stone in map_stones.keys():
-                continue
-            if stone == 0:
-                map_stones[stone] = 1
-                continue
-            if len(str(stone)) % 2 == 0:
-                cut_len = int(len(str(stone))/2)
-                left_stone = int(str(stone)[:cut_len])
-                right_stone = int(str(stone)[cut_len:])
-                map_stones[stone] = [left_stone, right_stone]
-                continue
-            map_stones[stone] = (stone * 2024)
+    final_stones = []
+    for base_stone in curr_stones:
+        single_curr_stones = [base_stone]
+        for i in range(1, number_blinks + 1):
+            # print(f'Doing iteration {i} for single stone {base_stone}')
+            single_stones_end = []
+            distinct_stones = set(single_curr_stones)
+            # print(f'Distinct stones are {len(set(single_curr_stones))}')
+            for d_stone in distinct_stones:
+                if d_stone in map_stones.keys():
+                    continue
+                if d_stone == 0:
+                    map_stones[d_stone] = 1
+                    continue
+                if len(str(d_stone)) % 2 == 0:
+                    cut_len = int(len(str(d_stone))/2)
+                    left_stone = int(str(d_stone)[:cut_len])
+                    right_stone = int(str(d_stone)[cut_len:])
+                    map_stones[d_stone] = [left_stone, right_stone]
+                    continue
+                map_stones[d_stone] = (d_stone * 2024)
 
-        print('Doing the replacement')
-        # list approach
-        for stone in curr_stones:
-            new_stones = map_stones[stone]
-            if isinstance(new_stones, list):
-                stones_end.extend(new_stones)
-                continue
-            stones_end.append(new_stones)
+            # print('Doing the replacement')
+            # list approach
+            for stone in single_curr_stones:
+                new_stones = map_stones[stone]
+                if isinstance(new_stones, list):
+                    single_stones_end.extend(new_stones)
+                    continue
+                single_stones_end.append(new_stones)
 
-        curr_stones = deepcopy(stones_end)
-        # end list approach
+            single_curr_stones = deepcopy(single_stones_end)
+        
+        final_stones.extend(single_curr_stones)
 
-        # # string replace approach
-        # # new stones starts from existing. Eacj stone surrounded by double _ to understande needs to be replaced
-        # new_stones_as_str = '__'.join([str(s) for s in curr_stones])
-        # new_stones_as_str = f'__{new_stones_as_str}__'
-        # for stone in distinct_stones:
-        #     new_stones = map_stones[stone]
-        #     if isinstance(new_stones, list):
-        #         stones_replace = ',,'.join([str(s) for s in new_stones])
-        #         stones_replace = f',{stones_replace},'
-        #     else:
-        #         stones_replace = f',{new_stones},'
+            # end list approach
 
-        #     new_stones_as_str = new_stones_as_str.replace(f'_{stone}_', stones_replace)
+            # # string replace approach
+            # # new stones starts from existing. Eacj stone surrounded by double _ to understande needs to be replaced
+            # new_stones_as_str = '__'.join([str(s) for s in curr_stones])
+            # new_stones_as_str = f'__{new_stones_as_str}__'
+            # for stone in distinct_stones:
+            #     new_stones = map_stones[stone]
+            #     if isinstance(new_stones, list):
+            #         stones_replace = ',,'.join([str(s) for s in new_stones])
+            #         stones_replace = f',{stones_replace},'
+            #     else:
+            #         stones_replace = f',{new_stones},'
 
-        # new_stones_as_str = (
-        #     new_stones_as_str
-        #     .removeprefix('_')
-        #     .removesuffix('_')
-        #     .removeprefix(',')
-        #     .removesuffix(',')
-        # )
-        # # print(new_stones_as_str)
-        # curr_stones = [int(s) for s in new_stones_as_str.split(',,')]
-        # # end string replace approach
+            #     new_stones_as_str = new_stones_as_str.replace(f'_{stone}_', stones_replace)
 
-        # print(f'Step {i} has stones {curr_stones}')
-    print(len(curr_stones))
+            # new_stones_as_str = (
+            #     new_stones_as_str
+            #     .removeprefix('_')
+            #     .removesuffix('_')
+            #     .removeprefix(',')
+            #     .removesuffix(',')
+            # )
+            # # print(new_stones_as_str)
+            # curr_stones = [int(s) for s in new_stones_as_str.split(',,')]
+            # # end string replace approach
+
+            # print(f'Step {i} has stones {curr_stones}')
+    print(len(final_stones))
